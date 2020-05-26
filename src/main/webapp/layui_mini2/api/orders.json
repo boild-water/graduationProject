@@ -1,0 +1,68 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 1000,
+  "data": [
+    {
+      "orderId": 10000,
+      "userId": 2,
+      "sellerId": 26,
+	  "goodsId": 126,
+	  "addressId": 9,
+	  "orderType":0,
+	  "orderPrice": 99.00,
+	  "orderNote": "备注信息：最好晚上7点以后将物品送过来，其他时间我可能不在宿舍。",
+      "createTime": "1997-11-07 10:52:22",
+	  "orderStatus": 
+		{
+		  "status":1
+		}
+    },
+	{
+	  "orderId": 10001,
+	  "userId": 2,
+	  "sellerId": 26,
+	  "goodsId": 126,
+	  "addressId": 9,
+	  "orderType":0,
+	  "orderPrice": 99.00,
+	  "orderNote": "备注信息测试哈哈哈哈哈哈哈哈哈哈哈",
+	  "createTime": "1997-11-07 10:52:22",
+	  "orderStatus": {"status":2}	  
+	},
+	{
+	  "orderId": 10002,
+	  "userId": 2,
+	  "sellerId": 26,
+	  "goodsId": 126,
+	  "addressId": 9,
+	  "orderType":1,
+	  "orderPrice": 99.00,
+	  "orderNote": "20000毫安时的罗马仕充电宝，容量非常给力，3500的手机电池可以充5次左右，低价出售，不讲价，非诚者勿扰。",
+	  "createTime": "1997-11-07 10:52:22",
+	  "orderStatus.status": "3"
+	},
+	{
+	  "orderId": 10003,
+	  "userId": 2,
+	  "sellerId": 26,
+	  "goodsId": 126,
+	  "addressId": 9,
+	  "orderType":1,
+	  "orderPrice": 99.00,
+	  "orderNote": "备注信息测试哈哈哈哈哈哈哈哈哈哈哈",
+	  "createTime": "1997-11-07 10:52:22"
+	},
+	{
+	  "orderId": 10004,
+	  "userId": 2,
+	  "sellerId": 26,
+	  "goodsId": 126,
+	  "addressId": 9,
+	  "orderType":0,
+	  "orderPrice": 99.00,
+	  "orderNote": "备注信息测试哈哈哈哈哈哈哈哈哈哈哈",
+	  "createTime": "1997-11-07 10:52:22"
+	}
+  ]
+}

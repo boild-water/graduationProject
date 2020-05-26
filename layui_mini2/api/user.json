@@ -1,0 +1,80 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 1000,
+  "data": [
+    {
+      "id": 10000,
+      "username": "靳飞",
+      "sex": "男",
+	  "birthday":"1997-11-07",
+	  "lastLogin":"1997-11-07 10:52:22",
+	  "createAt":"1997-11-07 10:52:22",
+      "phone": "17354278936",
+	  "email": "jinfei_mail@163.com",
+	  "qq": "162089680",
+	  "status": 0,
+      "power": 57
+    },
+    {
+      "id": 10001,
+      "username": "user-1",
+      "sex": "男",
+      "city": "城市-1",
+      "sign": "签名-1",
+      "experience": 884,
+      "logins": 58,
+      "wealth": 64928690,
+      "classify": "词人",
+      "score": 27
+    },
+    {
+      "id": 10002,
+      "username": "user-2",
+      "sex": "女",
+      "city": "城市-2",
+      "sign": "签名-2",
+      "experience": 650,
+      "logins": 77,
+      "wealth": 6298078,
+      "classify": "酱油",
+      "score": 31
+    },
+    {
+      "id": 10003,
+      "username": "user-3",
+      "sex": "女",
+      "city": "城市-3",
+      "sign": "签名-3",
+      "experience": 362,
+      "logins": 157,
+      "wealth": 37117017,
+      "classify": "诗人",
+      "score": 68
+    },
+    {
+      "id": 10004,
+      "username": "user-4",
+      "sex": "男",
+      "city": "城市-4",
+      "sign": "签名-4",
+      "experience": 807,
+      "logins": 51,
+      "wealth": 76263262,
+      "classify": "作家",
+      "score": 6
+    },
+    {
+      "id": 10005,
+      "username": "user-5",
+      "sex": "女",
+      "city": "城市-5",
+      "sign": "签名-5",
+      "experience": 173,
+      "logins": 68,
+      "wealth": 60344147,
+      "classify": "作家",
+      "score": 87
+    }
+  ]
+}

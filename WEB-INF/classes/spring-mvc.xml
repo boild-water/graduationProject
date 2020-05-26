@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.0.xsd
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
+
+    <!-- 自动扫描该包 -->
+    <context:component-scan base-package="edu.ahpu.controller"/>
+
+    <!-- 处理请求时返回json字符串的中文乱码问题 -->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+            <bean id="fastJsonHttpMessageConverter"
+                  class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!-- 静态资源访问（不拦截此目录下的东西的访问） -->
+    <mvc:resources location="/WEB-INF/pages/error/" mapping="/WEB-INF/pages/error/**"/>
+    <mvc:resources location="/upload/" mapping="/upload/**"/>
+    <mvc:resources location="/res/" mapping="/res/**"/>
+    <mvc:resources location="/layui_fly/" mapping="/layui_fly/**"/>
+    <mvc:resources location="/layui_mini2/" mapping="/layui_mini2/**"/>
+    
+    <!--配置拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+
+            <!--不拦截静态目录等文件-->
+            <mvc:exclude-mapping path="/WEB-INF/pages/error/**"/>
+            <mvc:exclude-mapping path="/upload/**"/>
+            <mvc:exclude-mapping path="/res/**"/>
+            <mvc:exclude-mapping path="/layui_fly/**"/>
+            <mvc:exclude-mapping path="/layui_mini2/**"/>
+
+            <!-- 不拦截与登录、注册相关的请求 -->
+            <mvc:exclude-mapping path="/user/login"/>
+            <mvc:exclude-mapping path="/user/ajaxPhone"/>
+            <mvc:exclude-mapping path="/user/register"/>
+            <mvc:exclude-mapping path="/user/login"/>
+            <mvc:exclude-mapping path="/admin/login"/>
+
+            <!--也拦截物品主页、物品查找、物品详情等请求-->
+            <mvc:exclude-mapping path="/goods/homeGoods"/>
+            <mvc:exclude-mapping path="/goods/category/*"/>
+            <mvc:exclude-mapping path="/goods/categoryPage/*"/>
+            <mvc:exclude-mapping path="/goods/goodsId/*"/>
+            
+            <!--不拦截管理员登录-->
+            <mvc:exclude-mapping path="/admin/login"/>
+
+            <!--由于管理员复用了用户和物品模块的上传图片功能，所以此处也简单对这两处不拦截-->
+            <mvc:exclude-mapping path="/user/uploadFile"/>
+            <mvc:exclude-mapping path="/goods/uploadFile"/>
+
+            <bean class="edu.ahpu.util.MyWebsiteInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+    <!-- 视图解析器 -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"></property>
+        <property name="suffix" value=".jsp"></property>
+    </bean>
+
+    <!-- 文件上传 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设置上传文件的最大尺寸为20MB -->
+        <property name="maxUploadSize" value="#{20*1024*1024}"/>
+        <!-- 统一编码 -->
+        <property name="defaultEncoding" value="utf-8"/>
+    </bean>
+</beans>

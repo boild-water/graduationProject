@@ -1,0 +1,61 @@
+/**
+ * create by boildwater
+ */
+
+.class1 {
+	width: 1000px;
+	margin: 20px auto;
+	background-color: #f9f9f9;
+	position: relative;
+}
+
+.class2 {
+	padding: 10px;
+}
+
+.class3 {
+	padding-top: 10px;
+	color: #000;
+	font-size: 20px;
+	font-weight: 600;
+}
+
+.class4 {
+
+	width: 300px;
+	height: 390px;
+	border: 1px solid #d9dadc;
+	background: #fff;
+	position: absolute;
+	top: 196px;
+	right: 90px;
+	padding: 0 30px;
+}
+
+.class5 {
+	width: 102px;
+	background: #eeeeee;
+	text-align: center;
+	color: #333;
+	height: 36px;
+	line-height: 36px;
+	display: inline-block;
+	border: none;
+	cursor: pointer;
+	position: absolute;
+	top: 1px;
+	right: 1px;
+	font-size: 12px;
+	padding: 0 14px;
+}
+
+.class6 {
+	height: 772px;position: relative;width: 1200px;margin: 0 auto;
+}
+.class7 {
+	font-size: 20px;color: #323232;text-align: center;padding: 50px 0;
+}
+
+.class8 {
+	font-size: 20px;color: #323232;text-align: center;padding: 30px 0;
+}

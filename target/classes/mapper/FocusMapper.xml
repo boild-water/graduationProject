@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahpu.dao.FocusMapper">
+    <resultMap id="BaseResultMap" type="edu.ahpu.pojo.Focus">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="goods_id" property="goodsId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="focus_time" property="focusTime" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="getFocusByUserId" resultMap="BaseResultMap">
+        select * from focus
+        where user_id = #{user_id,jdbcType=INTEGER}
+        order by focus_time desc
+    </select>
+
+    <delete id="deleteFocusByUserIdAndGoodsId" parameterType="java.lang.Integer">
+        delete from focus where goods_id=#{arg0} and user_id=#{arg1}
+    </delete>
+
+    <insert id="addFocus">
+        insert into focus(goods_id,user_id,focus_time)
+        values (#{goodsId},#{userId},#{focusTime});
+    </insert>
+
+    <!--根据goodsId和userId查询关注记录-->
+    <select id="getFocus" resultMap="BaseResultMap">
+        select * from focus
+        where user_id = #{userId} and goods_id = #{goodsId}
+    </select>
+
+</mapper>

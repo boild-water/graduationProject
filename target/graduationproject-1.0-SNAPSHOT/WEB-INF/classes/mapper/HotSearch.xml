@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahpu.dao.HotSearchMapper">
+
+    <resultMap id="hotSearchMap" type="edu.ahpu.pojo.HotSearch">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="content" property="content" jdbcType="VARCHAR"/>
+        <result column="search_num" property="searchNum" jdbcType="INTEGER"/>
+        <result column="search_time" property="searchTime" jdbcType="VARCHAR"/>
+        <result column="add_money" property="addMoney" jdbcType="REAL"/>
+    </resultMap>
+
+    <!--添加热搜-->
+    <insert id="addHotSearch" parameterType="edu.ahpu.pojo.HotSearch">
+        insert into hot_search values(null,#{content,jdbcType=VARCHAR},
+            #{searchNum,jdbcType=INTEGER},#{searchTime,jdbcType=VARCHAR},
+            #{addMoney,jdbcType=REAL})
+    </insert>
+
+    <!--更新热搜-->
+    <update id="updateHotSearch" parameterType="edu.ahpu.pojo.HotSearch">
+        update hot_search
+        set
+            content = #{content},
+            search_num = #{searchNum},
+            search_time = #{searchTime}
+        where
+            id = #{id}
+    </update>
+
+    <!--查询最近n条热搜 先按照搜索次数由高到低再按照搜索时间将查询结果排序 -->
+    <select id="getHotSearchLimit" parameterType="java.lang.Integer" resultMap="hotSearchMap">
+        select * from hot_search order by search_num desc ,search_time desc limit #{limit}
+    </select>
+
+    <!--根据content查询热搜记录-->
+    <select id="getHotSearchByContent" parameterType="java.lang.String" resultMap="hotSearchMap">
+        select * from hot_search where content = #{content}
+    </select>
+
+
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.ahpu.dao.UserSimilarityMapper">
+
+	<!-- 所有的用户行为表的字段 -->
+	<sql id="all_user_similarity_columns">
+	   user_id, user_ref_id, similarity
+	</sql>
+	
+	<!-- 查询出所有的用户行为 -->
+	<insert id="saveUserSimilarity" parameterType="userSimilarity">
+	   INSERT INTO shopping_similarity(<include refid="all_user_similarity_columns" />)
+	   VALUES(#{userId}, #{userRefId}, #{similarity})
+	</insert>
+	
+	<!-- 更新用户相似度数据 -->
+	<update id="updateUserSimilarity" parameterType="userSimilarity">
+	   UPDATE shopping_similarity
+	   SET similarity = #{similarity}
+	   WHERE user_id = #{userId} AND user_ref_id = #{userRefId}
+	</update>
+	
+	<!-- 判断某两个用户之间的相似度是否已经存在 -->
+	<select id="countUserSimilarity" parameterType="userSimilarity" resultType="integer">
+	   SELECT COUNT(*) FROM shopping_similarity
+	   WHERE user_id = #{userId} AND user_ref_id = #{userRefId}
+	   OR user_ref_id = #{userId} AND user_id = #{userRefId}
+	</select>
+	
+	<!-- 查询某个用户与其他用户之间的相似度列表  -->
+	<select id="listUserSimilarityByUId" parameterType="long" resultType="userSimilarity">
+	   SELECT <include refid="all_user_similarity_columns" />
+	   FROM shopping_similarity
+	   WHERE user_id = #{userId} OR user_ref_id = #{userId}
+	</select>
+	
+</mapper>

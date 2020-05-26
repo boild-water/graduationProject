@@ -1,0 +1,175 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "/admin/welcome?t=1"
+  },
+  "logoInfo": {
+    "title": "后台管理系统",
+    "image": "/layui_mini2/images/logo.svg",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "常规管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "主页模板",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self",
+          "child": [
+            {
+              "title": "主页一",
+              "href": "welcome",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "主页二",
+              "href": "page/welcome-2.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "主页三",
+              "href": "page/welcome-3.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
+        },
+		
+		{
+		  "title": "用户管理",
+		  "href": "/admin/userPage",
+		  "icon": "fa fa-user",
+		  "target": "_self"
+		},
+		
+		{
+		  "title": "物品管理",
+		  "href": "/admin/goodsPage",
+		  "icon": "fa fa-archive",
+		  "target": "_self"
+		},
+		{
+		  "title": "订单中心",
+		  "href": "",
+		  "icon": "fa fa-file-text",
+		  "target": "_self",
+		  "child": [
+		    {
+		      "title": "订单列表",
+		      "href": "/admin/ordersPage",
+		      "icon": "fa fa-th-list",
+		      "target": "_self"
+		    },
+		    {
+		      "title": "订单状态",
+		      "href": "/admin/orderStatusPage",
+		      "icon": "fa fa-clock-o",
+		      "target": "_self"
+		    }
+		  ]
+		},
+        {
+          "title": "评论管理",
+          "href": "/admin/commentPage",
+          "icon": "fa fa-comments-o",
+          "target": "_self"
+        },
+        {
+          "title": "求购管理",
+          "href": "/admin/buyinfoPage",
+          "icon": "fa fa-diamond",
+          "target": "_self"
+        },
+        {
+          "title": "地址管理",
+          "href": "/admin/addressPage",
+          "icon": "fa fa-location-arrow",
+          "target": "_self"
+        },
+        {
+          "title": "图片中心",
+          "href": "",
+          "icon": "fa fa-image",
+          "target": "_self",
+          "child": [
+            {
+              "title": "物品图片",
+              "href": "",
+              "icon": "fa fa-file-text",
+              "target": "_self"
+            },
+            {
+              "title": "用户头像",
+              "href": "",
+              "icon": "fa fa-clock-o",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "公告管理",
+          "href": "page/",
+          "icon": "layui-icon layui-icon-notice",
+          "target": "_self"
+        }
+      ]
+    },
+    {
+      "title": "其它管理",
+      "icon": "fa fa-slideshare",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "多级菜单",
+          "href": "",
+          "icon": "fa fa-meetup",
+          "target": "",
+          "child": [
+            {
+              "title": "按钮1",
+              "href": "page/button.html?v=1",
+              "icon": "fa fa-calendar",
+              "target": "_self",
+              "child": [
+                {
+                  "title": "按钮2",
+                  "href": "page/button.html?v=2",
+                  "icon": "fa fa-snowflake-o",
+                  "target": "_self",
+                  "child": [
+                    {
+                      "title": "按钮3",
+                      "href": "page/button.html?v=3",
+                      "icon": "fa fa-snowflake-o",
+                      "target": "_self"
+                    },
+                    {
+                      "title": "表单4",
+                      "href": "page/form.html?v=1",
+                      "icon": "fa fa-calendar",
+                      "target": "_self"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "title": "失效菜单",
+          "href": "page/error.html",
+          "icon": "fa fa-superpowers",
+          "target": "_self"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahpu.dao.CommentsMapper">
+    <resultMap id="commentMap" type="edu.ahpu.pojo.Comment">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="goods_id" property="goodsId" jdbcType="INTEGER"/>
+        <result column="create_at" property="createAt" jdbcType="VARCHAR"/>
+        <result column="content" property="content" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, goods_id, create_at,comment
+    </sql>
+
+    <!--条件查询所有comment-->
+    <select id="getCommentList" resultMap="commentMap" parameterType="edu.ahpu.pojo.Comment">
+        select * from comment
+        where 1 = 1
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="content != null and content != ''">
+                AND content like concat('%',#{content},'%')
+            </if>
+            <if test="goodsId != null">
+                and goods_id = #{goodsId}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId}
+            </if>
+    </select>
+
+    <!--条件更新字段-->
+    <update id="updateByPrimaryKeySelective"  parameterType="edu.ahpu.pojo.Comment">
+        update comment
+        <set>
+            <if test="content != null and content != ''">
+                content = #{content},
+            </if>
+            <if test="goodsId != null">
+                goods_id = #{goodsId},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="createAt != null">
+                create_at = #{createAt},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--根据id查询comment-->
+    <select id="getCommentById" resultMap="commentMap" parameterType="edu.ahpu.pojo.Comment">
+        select * from comment
+        where id = #{id}
+    </select>
+
+    <!--全字段更新评论信息-->
+    <update id="updateByPrimaryKey" parameterType="edu.ahpu.pojo.Comment">
+        update comment
+        set
+            content = #{content},
+            goods_id = #{goodsId},
+            user_id = #{userId},
+            create_at = #{createAt}
+        where id = #{id}
+    </update>
+
+    <!--根据id删除comment-->
+    <delete id="deleteById" parameterType="edu.ahpu.pojo.Comment">
+        delete from comment where id = #{id}
+    </delete>
+
+</mapper>

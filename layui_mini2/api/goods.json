@@ -1,0 +1,60 @@
+{
+  "code": 0,
+  "msg": "",
+  "count": 1000,
+  "data": [
+    {
+      "id": 10000,
+      "categoryId": 2,
+      "userId": 26,
+	  "name":"罗马仕充电宝",
+	  "description":"20000毫安时的罗马仕充电宝，容量非常给力，3500的手机电池可以充5次左右，低价出售，不讲价，非诚者勿扰。",
+	  "price": 89.00,
+	  "realPrice": 99.00,
+      "startTime": "1997-11-07 10:52:22",
+      "polishTime": "1997-11-07 10:52:22",
+	  "pageviews": 99,
+	  "isBargain": 0,
+      "status": 0
+    },
+	{
+	  "id": 10001,
+	  "categoryId": 2,
+	  "userId": 26,
+	  "name":"罗马仕充电宝",
+	  "price": 89.00,
+	  "realPrice": 99.00,
+	  "startTime": "1997-11-07 10:52:22",
+	  "polishTime": "1997-11-07 10:52:22",
+	  "pageviews": 99,
+	  "isBargain": 0,
+	  "status": 0
+	},
+	{
+	  "id": 10002,
+	  "categoryId": 2,
+	  "userId": 26,
+	  "name":"罗马仕充电宝",
+	  "price": 89.00,
+	  "realPrice": 99.00,
+	  "startTime": "1997-11-07 10:52:22",
+	  "polishTime": "1997-11-07 10:52:22",
+	  "pageviews": 99,
+	  "isBargain": 0,
+	  "status": 0
+	},
+	{
+	  "id": 10003,
+	  "categoryId": 2,
+	  "userId": 26,
+	  "name":"罗马仕充电宝",
+	  "price": 89.00,
+	  "realPrice": 89.00,
+	  "startTime": "1997-11-07 10:52:22",
+	  "polishTime": "1997-11-07 10:52:22",
+	  "pageviews": 99,
+	  "isBargain": 0,
+	  "status": 0
+	}
+  ]
+}

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahpu.dao.UserMapper">
+
+    <resultMap id="BaseResultMap" type="edu.ahpu.pojo.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="head_img_url" property="headImgUrl" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="CHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="CHAR"/>
+        <result column="sex" property="sex" jdbcType="TINYINT"/>
+        <result column="birthday" property="birthday" jdbcType="CHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="QQ" property="qq" jdbcType="VARCHAR"/>
+        <result column="create_at" property="createAt" jdbcType="VARCHAR"/>
+        <result column="power" property="power" jdbcType="INTEGER"/>
+        <result column="last_login" property="lastLogin" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, head_img_url,phone, username, password,sex,birthday,email, QQ, create_at, power, last_login, status
+    </sql>
+
+    <!--admin 功能分界线 ************************************************************-->
+
+    <!--查询所有用户数-->
+    <select id="getAllUsersCount" resultType="java.lang.Integer">
+        select count(id) from user
+    </select>
+
+    <!--获取所有用户信息(包含条件查找功能)-->
+    <select id="getUserList" resultMap="BaseResultMap" parameterType="edu.ahpu.pojo.User">
+        select
+            <include refid="Base_Column_List"/>
+        from user
+        where 1 = 1
+            <if test="id != '' and id != null">
+                and id = #{id}
+            </if>
+            <if test="username != '' and username != null">
+                and username like concat('%',#{username},'%')
+            </if>
+            <if test=" phone != '' and phone != null">
+                and phone like concat('%',#{phone},'%')
+            </if>
+            <if test="sex != null">
+                and sex = #{sex}
+            </if>
+            <if test="status != null">
+                and status = #{status}
+            </if>
+    </select>
+
+    <!--根据user中包含的数据选择性更新user-->
+    <update id="updateByPrimaryKeySelective" parameterType="edu.ahpu.pojo.User">
+        update user
+        <set>
+            <if test="headImgUrl != null">
+                head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="phone != null">
+                phone = #{phone,jdbcType=CHAR},
+            </if>
+            <if test="username != null">
+                username = #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="sex != null">
+                sex = #{sex,jdbcType=TINYINT},
+            </if>
+            <if test="birthday != null">
+                birthday = #{birthday,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                email = #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="qq != null">
+                QQ = #{qq,jdbcType=VARCHAR},
+            </if>
+            <if test="createAt != null">
+                create_at = #{createAt,jdbcType=VARCHAR},
+            </if>
+            <if test="lastLogin != null">
+                last_login = #{lastLogin,jdbcType=VARCHAR},
+            </if>
+            <if test="power != null">
+                power = #{power,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--根据id获取user-->
+    <select id="getUserById" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from user
+        where
+            id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--全字段更新user信息-->
+    <update id="updateByPrimaryKey" parameterType="edu.ahpu.pojo.User">
+        update user
+        set
+            head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+            phone = #{phone,jdbcType=CHAR},
+            username = #{username,jdbcType=VARCHAR},
+            sex = #{sex,jdbcType=TINYINT},
+            birthday = #{birthday,jdbcType=VARCHAR},
+            email = #{email,jdbcType=VARCHAR},
+            QQ = #{qq,jdbcType=VARCHAR},
+            create_at = #{createAt,jdbcType=VARCHAR},
+            power = #{power,jdbcType=INTEGER},
+            last_login = #{lastLogin,jdbcType=VARCHAR},
+            status = #{status,jdbcType=TINYINT}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--根据用户id删除用户-->
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from user
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--admin 功能分界线 ************************************************************-->
+
+
+
+    <!--更新user的最后登录时间-->
+    <update id="updateLastLogin">
+        update user set last_login = #{lastLogin} where id = #{id}
+    </update>
+
+    <!-- 增加user -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into user
+        (<include refid="Base_Column_List"/>)
+        values
+        (#{id,jdbcType=INTEGER},#{headImgUrl,jdbcType=VARCHAR},
+        #{phone,jdbcType=CHAR},#{username,jdbcType=VARCHAR},
+        #{password,jdbcType=CHAR},#{sex,jdbcType=TINYINT},
+        #{birthday,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},
+        #{qq,jdbcType=VARCHAR}, #{createAt,jdbcType=VARCHAR},
+        #{power,jdbcType=INTEGER},#{lastLogin,jdbcType=VARCHAR},
+        #{status,jdbcType=TINYINT})
+    </insert>
+
+    <!--根据id查询用户信息-->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select
+            <include refid="Base_Column_List"/>
+        from user
+        where
+            id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--根据手机号查询用户-->
+    <select id="getUserByPhone" resultMap="BaseResultMap" parameterType="String">
+        select
+        <include refid="Base_Column_List"/>
+        from user
+        where phone = #{phone,jdbcType=CHAR}
+    </select>
+
+
+
+    <!--根据手机号 用户名 qq查询用户-->
+    <select id="getUserListByUser" resultMap="BaseResultMap" parameterType="String">
+        select * from user where 1=1
+        <if test="phone != '' and phone != null">
+            AND phone like concat('%',#{phone},'%')
+        </if>
+        <if test="username != '' and username != null">
+            AND username like concat('%',#{username},'%')
+        </if>
+        <if test=" qq != '' and qq != null">
+            AND qq like concat('%',#{qq},'%')
+        </if>
+    </select>
+
+    <select id="getUserListOrderByCreateAt" resultMap="BaseResultMap" parameterType="String">
+        select
+        <include refid="Base_Column_List"/>
+        from user Order By create_at Desc
+    </select>
+
+    <insert id="insertSelective" parameterType="edu.ahpu.pojo.User">
+        insert into user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="username != null">
+                username,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="qq != null">
+                QQ,
+            </if>
+            <if test="createAt != null">
+                create_at,
+            </if>
+            <if test="goodsNum != null">
+                goods_num,
+            </if>
+            <if test="power != null">
+                power,
+            </if>
+            <if test="lastLogin != null">
+                last_login,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="phone != null">
+                #{phone,jdbcType=CHAR},
+            </if>
+            <if test="username != null">
+                #{username,jdbcType=VARCHAR},
+            </if>
+            <if test="password != null">
+                #{password,jdbcType=CHAR},
+            </if>
+            <if test="qq != null">
+                #{qq,jdbcType=VARCHAR},
+            </if>
+            <if test="createAt != null">
+                #{createAt,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsNum != null">
+                #{goodsNum,jdbcType=INTEGER},
+            </if>
+            <if test="power != null">
+                #{power,jdbcType=INTEGER},
+            </if>
+            <if test="lastLogin != null">
+                #{lastLogin,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=TINYINT},
+            </if>
+        </trim>
+    </insert>
+
+
+
+    <!--根据id修改user密码-->
+    <update id="modifyPassword">
+        update user set password = #{password} where id = #{id}
+    </update>
+
+    <!--更新用户所有发布物品的总数量-->
+    <update id="updateGoodsNum" parameterType="Integer">
+        update user set
+        goods_num = #{goodsNum,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+
+
+
+
+
+</mapper>

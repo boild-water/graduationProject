@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="edu.ahpu.dao.UserBehaviorMapper">
+
+	<resultMap id="userBehaviorMap" type="edu.ahpu.pojo.UserBehavior">
+		<result column="user_id" property="userId" jdbcType="INTEGER"/>
+		<result column="category_id" property="categoryId" jdbcType="INTEGER"/>
+		<result column="hits" property="hits" jdbcType="BIGINT"/>
+	</resultMap>
+
+	<!-- 所有的用户行为表的字段 -->
+	<sql id="all_user_behavior_columns">
+	   user_id, category_id, hits
+	</sql>
+
+	<!-- 查询出所有的用户行为 -->
+	<select id="listAllUserBehaviors" resultMap="userBehaviorMap">
+	   SELECT <include refid="all_user_behavior_columns" />
+	   FROM recommend_user_behavior
+	</select>
+	
+	<!-- 根据userId和categoryId查询用户行为表中对应的点击量 -->
+	<select id="getHitsByUserBehavior" parameterType="userBehavior" resultType="long">
+	   SELECT hits FROM recommend_user_behavior
+	   WHERE user_id = #{userId} AND category_id = #{categoryId}
+	</select>
+	
+	<!-- 统计某个用户的行为记录的条数 -->
+	<select id="countUserActive" parameterType="userBehavior" resultType="integer">
+       	SELECT COUNT(*) FROM recommend_user_behavior
+       	WHERE user_id = #{userId} AND category_id = #{categoryId}
+	</select>
+	
+	<!-- 向用户行为表中添加一条用户的行为记录 -->
+	<insert id="addUserBehavior" parameterType="userBehavior">
+	   INSERT INTO recommend_user_behavior(user_id, category_id, hits)
+	   VALUES(#{userId}, #{categoryId}, #{hits})
+	</insert>
+
+    <!-- 更新用户对某个二级类目的点击量 -->
+    <update id="updateUserBehavior" parameterType="userBehavior">
+        UPDATE recommend_user_behavior SET hits = #{hits}
+        WHERE user_id = #{userId} AND category_id = #{categoryId}
+    </update>
+
+</mapper>

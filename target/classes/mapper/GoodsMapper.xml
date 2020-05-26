@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahpu.dao.GoodsMapper">
+
+    <resultMap id="commentMap" type="edu.ahpu.pojo.Comment">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="goods_id" property="goodsId" jdbcType="LONGVARCHAR"/>
+        <result column="content" property="content" jdbcType="LONGVARCHAR"/>
+        <result column="create_at" property="createAt" jdbcType="VARCHAR"/>
+        <association property="user" javaType="edu.ahpu.pojo.User" resultMap="userMap"/>
+    </resultMap>
+    <resultMap id="userMap" type="edu.ahpu.pojo.User">
+        <id column="user_id" property="id" jdbcType="INTEGER"/>
+        <result column="head_img_url" property="headImgUrl" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="CHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="CHAR"/>
+        <result column="QQ" property="qq" jdbcType="VARCHAR"/>
+        <result column="ucreate_at" property="createAt" jdbcType="VARCHAR"/>
+        <result column="power" property="power" jdbcType="INTEGER"/>
+        <result column="last_login" property="lastLogin" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <resultMap id="BaseResultMap" type="edu.ahpu.pojo.Goods">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="category_id" property="categoryId" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <!-- real对应于 jdbcType中的float类型 -->
+        <result column="price" property="price" jdbcType="REAL"/>
+        <result column="real_price" property="realPrice" jdbcType="REAL"/>
+        <result column="start_time" property="startTime" jdbcType="VARCHAR"/>
+        <result column="polish_time" property="polishTime" jdbcType="VARCHAR"/>
+        <result column="end_time" property="endTime" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="LONGVARCHAR"/>
+        <result column="pageviews" property="pageviews" jdbcType="INTEGER"/>
+        <result column="is_bargain" property="isBargain" jdbcType="TINYINT"/>
+        <result column="address_desc" property="addressDesc" jdbcType="LONGVARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, category_id, user_id, name, price, real_price,start_time,
+        polish_time, end_time, description, status, pageviews, is_bargain, address_desc
+    </sql>
+
+    <sql id="Factor">
+        order by polish_time DESC
+    </sql>
+
+    <!--admin功能分界线 ******************************************************-->
+
+    <!--查询所有发布的物品数目-->
+    <select id="getAllGoodsCount" resultType="java.lang.Integer">
+        select count(id) from goods
+    </select>
+
+    <!--查询所有的物品浏览量总和-->
+    <select id="getAllGoodsPageviews" resultType="java.lang.Integer">
+        select sum(pageviews) from goods
+    </select>
+
+    <!-- 条件查询所有的物品信息 -->
+    <select id="getGoodsList" resultMap="BaseResultMap" parameterType="edu.ahpu.pojo.Goods">
+        select * from goods
+        where 1 = 1
+            <if test="id != null">
+                AND id = #{id}
+            </if>
+            <if test="categoryId != null">
+                AND category_id = #{categoryId}
+            </if>
+            <if test="userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="name != '' and name != null">
+                AND name like concat('%',#{name},'%')
+            </if>
+            <if test="isBargain != null">
+                AND is_bargain = #{isBargain}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+    </select>
+
+    <!--根据goods中存在的条件，选择性的更新goods信息-->
+    <update id="updateByPrimaryKeySelective" parameterType="edu.ahpu.pojo.Goods">
+        update goods
+        <set>
+            <if test="categoryId != null">
+                category_id = #{categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=REAL},
+            </if>
+            <if test="realPrice != null">
+                real_price = #{realPrice,jdbcType=REAL},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime,jdbcType=VARCHAR},
+            </if>
+            <if test="polishTime != null">
+                polish_time = #{polishTime,jdbcType=VARCHAR},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="addressDesc != null">
+                address_desc = #{addressDesc,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="isBargain != null">
+                is_bargain = #{isBargain,jdbcType=TINYINT},
+            </if>
+            <if test="pageviews != null">
+                pageviews = #{pageviews,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!-- 根据id查询goods -->
+    <select id="getGoodsById" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        *
+        from goods
+        where id = #{id,jdbcType=INTEGER}
+        <include refid="Factor"></include>
+    </select>
+
+    <!--全字段更新goods信息-->
+    <update id="updateByPrimaryKey" parameterType="edu.ahpu.pojo.Goods">
+        update goods
+        set
+            name = #{name,jdbcType=VARCHAR},
+            category_id = #{categoryId,jdbcType=INTEGER},
+            user_id = #{userId,jdbcType=INTEGER},
+            price = #{price,jdbcType=REAL},
+            real_price = #{realPrice,jdbcType=REAL},
+            start_time = #{startTime,jdbcType=VARCHAR},
+            end_time = #{endTime,jdbcType=VARCHAR},
+            polish_time = #{polishTime,jdbcType=VARCHAR},
+            is_bargain = #{isBargain,jdbcType=TINYINT},
+            status = #{status,jdbcType=INTEGER},
+            pageviews = #{pageviews,jdbcType=INTEGER},
+            description = #{description,jdbcType=LONGVARCHAR},
+            address_desc = #{addressDesc,jdbcType=LONGVARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--根据id删除物品信息 真正的删除-->
+    <delete id="deleteGoodsById" parameterType="edu.ahpu.pojo.Goods">
+        delete from goods where id = #{id}
+    </delete>
+
+
+
+
+
+    <!--admin功能分界线 ******************************************************-->
+
+
+
+
+
+
+    <!-- 查询浏览量最高的物品信息 -->
+    <select id="selectOrderByPageviews" resultMap="BaseResultMap">
+        select * from goods where status = 1
+        order by pageviews DESC
+        limit #{limit,jdbcType=INTEGER}
+    </select>
+
+    <!-- 查询最新发布物品信息，结果按擦亮时间排序，最新的在前 -->
+    <select id="selectOrderByDate" resultMap="BaseResultMap">
+        select * from goods where status=1
+        order by polish_time DESC
+        limit #{limit,jdbcType=INTEGER}
+    </select>
+
+    <!--
+        根据物品id查询该物品下的所有评论信息 需要查询的信息包括:
+            1.物品信息
+            2.评论者信息
+            3.评论内容
+        但是目前拿到查询条件的只有物品id，涉及三张表，三表关联查询
+    -->
+    <select id="selectCommentsByGoodsId" resultMap="commentMap" parameterType="java.lang.Integer">
+  	    select
+            comment.id,comment.goods_id,comment.content,comment.create_at,comment.user_id,
+            user.id,user.username,user.head_img_url
+  	    from
+  	        comment,user
+  	    where
+  	        goods_id = #{id} and comment.user_id = user.id
+  	    order by
+  	        create_at
+    </select>
+
+    <!--添加物品评论信息-->
+    <insert id="addComments">
+	    insert into comment(id,user_id,goods_id,content,create_at)
+	    values(#{id},#{user.id},#{goodsId},#{content},#{createAt})
+	</insert>
+
+    <!--根据物品id查询物品-->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        *
+        from goods
+        where id = #{id,jdbcType=INTEGER}
+        <include refid="Factor"></include>
+    </select>
+
+    <select id="searchGoods" resultMap="BaseResultMap" parameterType="String">
+        select
+        *
+        from goods
+        where status=1 and (name like concat('%',#{name},'%') OR description like concat('%',#{description},'%'))
+        <include refid="Factor"></include>
+    </select>
+
+    <!--根据物品名称、物品描述查询所有物品，按照擦亮时间排序-->
+    <select id="selectByStr" resultMap="BaseResultMap">
+        select * from goods where status = 1
+        <if test="name != null">
+            AND ( name like concat('%',#{name},'%')
+        </if>
+        <if test="description != null">
+            OR description like concat('%',#{description},'%'))
+        </if>
+        order by polish_time DESC
+    </select>
+
+    <!--根据物品种类、物品名称、物品描述信息 查询所有的上架物品-->
+    <select id="selectByCategory" resultMap="BaseResultMap">
+        select * from goods
+        where category_id = #{category_id,jdbcType=INTEGER}
+        <if test="name != null">
+            AND ( name like concat('%',#{name},'%')
+        </if>
+        <if test="description != null">
+            OR description like concat('%',#{description},'%'))
+        </if>
+        AND status = 1
+        order by polish_time DESC
+    </select>
+
+    <!--查询所有物品-->
+    <select id="selectAllGoods" resultMap="BaseResultMap">
+        select * from goods where and status = 1;
+    </select>
+
+    <!--根据userId查询该用户发布的所有上架物品-->
+    <select id="getGoodsByUserId" resultMap="BaseResultMap">
+        select * from goods where user_id = #{userId,jdbcType=INTEGER} and status = 1
+        <include refid="Factor"></include>
+    </select>
+    <!--根据userId查询该用户发布的所有的下架物品-->
+    <select id="getOffGoodsByUserId" resultMap="BaseResultMap">
+        select * from goods where user_id = #{userId,jdbcType=INTEGER} and status = 0
+        <include refid="Factor"></include>
+    </select>
+
+
+
+    <!--根据category_id查询物品信息，结果按擦亮时间排序，最新的在前-->
+    <select id="selectByCategoryOrderByDate" resultMap="BaseResultMap">
+        select * from goods
+        where category_id = #{categoryId,jdbcType=INTEGER} and status=1
+        order by polish_time DESC
+        limit #{limit,jdbcType=INTEGER}
+    </select>
+
+    
+
+    <!--根据id、name、categoryId、status 四个不确定条件查询物品-->
+    <select id="getPageGoodsByGoods" resultMap="BaseResultMap">
+        select * from goods where 1=1
+        <if test="id != null">
+            AND id like concat('%',#{id},'%')
+        </if>
+        <if test="name != '' and name != null">
+            AND name like concat('%',#{name},'%')
+        </if>
+        <if test="categoryId != '' and categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+    </select>
+
+    <!-- 真正的删除物品 -->
+    <delete id="deleteByPrimaryKeys" parameterType="java.lang.Integer">
+        delete from goods where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--删除物品，实际上是将物品下架-->
+    <update id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        update goods
+        <set>status=0</set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--添加物品信息，并且返回自增主键-->
+    <insert id="insert" parameterType="edu.ahpu.pojo.Goods" useGeneratedKeys="true" keyProperty="id">
+        insert into goods
+            (<include refid="Base_Column_List"></include>)
+        values (
+            #{id,jdbcType=INTEGER}, #{categoryId,jdbcType=INTEGER},
+            #{userId,jdbcType=INTEGER},#{name,jdbcType=VARCHAR},
+            #{price,jdbcType=REAL}, #{realPrice,jdbcType=REAL},
+            #{startTime,jdbcType=VARCHAR},#{polishTime,jdbcType=VARCHAR},
+            #{endTime,jdbcType=VARCHAR}, #{description,jdbcType=LONGVARCHAR},
+            #{status,jdbcType=INTEGER}, #{pageviews,jdbcType=INTEGER},
+            #{isBargain,jdbcType=TINYINT}, #{addressDesc,jdbcType=LONGVARCHAR}
+        )
+    </insert>
+
+    <insert id="insertSelective" parameterType="edu.ahpu.pojo.Goods">
+        insert into goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="categoryId != null">
+                category_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="name != null">
+                name,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+            <if test="realPrice != null">
+                real_price,
+            </if>
+            <if test="startTime != null">
+                start_time,
+            </if>
+            <if test="endTime != null">
+                end_time,
+            </if>
+            <if test="polishTime != null">
+                polish_time,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="categoryId != null">
+                #{categoryId,jdbcType=INTEGER},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=REAL},
+            </if>
+            <if test="realPrice != null">
+                #{realPrice,jdbcType=REAL},
+            </if>
+            <if test="startTime != null">
+                #{startTime,jdbcType=VARCHAR},
+            </if>
+            <if test="endTime != null">
+                #{endTime,jdbcType=VARCHAR},
+            </if>
+            <if test="endTime != null">
+                #{polishTime,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+
+
+    <!--更新物品信息-->
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="edu.ahpu.pojo.Goods">
+        update goods
+        set category_id = #{categoryId,jdbcType=INTEGER},
+          user_id = #{userId,jdbcType=INTEGER},
+          name = #{name,jdbcType=VARCHAR},
+          price = #{price,jdbcType=REAL},
+          real_price = #{realPrice,jdbcType=REAL},
+          start_time = #{startTime,jdbcType=VARCHAR},
+          end_time = #{endTime,jdbcType=VARCHAR},
+          polish_time = #{polishTime,jdbcType=VARCHAR},
+          status = #{status,jdbcType=INTEGER},
+          description = #{description,jdbcType=LONGVARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--根据id更新物品状态-->
+    <update id="updateGoodsByGoodsId" parameterType="edu.ahpu.pojo.Goods">
+        update goods
+        set status = #{status,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--更新物品的页面浏览量-->
+    <update id="updateGoodsPageviews">
+        update goods
+        set pageviews = pageviews + 1
+        where id = #{id};
+    </update>
+
+    <!--根据userId查询该用户所有发布物品的浏览总量-->
+    <select id="findAllGoodsPageViewsByUserId" resultType="java.lang.Integer" parameterType="java.lang.Integer">
+        select sum(pageviews) from goods where user_id = #{userId}
+    </select>
+
+    <!--根据categoryId从物品表中按照物品擦亮时间从高到低查询出一个物品-->
+    <select id="findOneGoodsByCategoryId" resultMap="BaseResultMap">
+        select * from goods
+        where
+            category_id = #{categoryId} and status = 1
+        order by
+            polish_time desc limit 1
+    </select>
+
+</mapper>

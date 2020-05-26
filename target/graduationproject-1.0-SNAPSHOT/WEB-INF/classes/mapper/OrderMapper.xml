@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahpu.dao.OrderMapper">
+
+    <!--需要注意："order"在mysql中是一个关键字，此处将数据表的名称设为"orders"与实体类Order对应 -->
+    <resultMap id="BaseResultMap" type="edu.ahpu.pojo.Order">
+        <id column="order_id" property="orderId" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="seller_id" property="sellerId" jdbcType="INTEGER"/>
+        <result column="goods_id" property="goodsId" jdbcType="INTEGER"/>
+        <result column="address_id" property="addressId" jdbcType="INTEGER"/>
+        <result column="order_type" property="orderType" jdbcType="INTEGER"/>
+        <!--注意 mysql的float类型对应与jdbc的real 而不是float。-->
+        <result column="order_price" property="orderPrice" jdbcType="REAL"/>
+        <result column="order_note" property="orderNote" jdbcType="LONGVARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <!--设置支持延迟加载的关联查询，遗留问题-->
+        <!--订单物品-->
+        <association property="goods" javaType="edu.ahpu.pojo.Goods"
+            select="edu.ahpu.dao.GoodsMapper.selectByPrimaryKey" column="goods_id" fetchType="lazy">
+        </association>
+        <!--订单物品图片-->
+        <association property="image" javaType="edu.ahpu.pojo.Image"
+            select="edu.ahpu.dao.ImageMapper.selectByGoodsPrimaryKey" column="goods_id" fetchType="lazy">
+        </association>
+        <!--订单地址-->
+        <association property="address" javaType="edu.ahpu.pojo.Address"
+            select="edu.ahpu.dao.AddressMapper.getAddressById" column="address_id" fetchType="lazy">
+        </association>
+    </resultMap>
+
+    <!--订单状态-->
+    <resultMap id="orderStatusMap" type="edu.ahpu.pojo.OrderStatus">
+        <id column="order_id" property="orderId"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="payment_time" property="paymentTime"/>
+        <result column="consign_time" property="consignTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="close_time" property="closeTime"/>
+        <result column="apply_refund_time" property="applyRefundTime"/>
+        <result column="refund_time" property="refundTime"/>
+        <result column="comment_time" property="commentTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+		order_id,user_id,goods_id,address_id,order_type,order_price,order_note,create_time
+	</sql>
+
+
+    <!--admin功能 **************************************************-->
+
+    <!--查询所有订单数目-->
+    <select id="getAllOrdersCount" resultType="java.lang.Integer">
+        select count(order_id) from orders
+    </select>
+
+    <!--查询所有订单，支持条件查询-->
+    <select id="getOrdersList" resultMap="BaseResultMap" parameterType="edu.ahpu.pojo.Order">
+		select * from orders
+		where 1 = 1
+            <if test="orderId != '' and orderId != null">
+                AND order_id = #{orderId}
+            </if>
+            <if test="goodsId != '' and goodsId != null">
+                AND goods_id = #{goodsId}
+            </if>
+            <if test="userId != '' and userId != null">
+                AND user_id = #{userId}
+            </if>
+            <if test="sellerId != '' and sellerId != null">
+                AND seller_id = #{sellerId}
+            </if>
+            <if test="orderPrice != null">
+                AND order_price like concat('%',#{orderPrice},'%')
+            </if>
+            <if test="orderType != null">
+                AND order_type = #{orderType}
+            </if>
+	</select>
+
+    <!--查询所有订单状态信息，支持条件查询-->
+    <select id="getOrderStatusList" resultMap="orderStatusMap" parameterType="edu.ahpu.pojo.OrderStatus">
+		select * from order_status
+		where 1 = 1
+            <if test="orderId != null">
+                AND order_id = #{orderId}
+            </if>
+            <if test="status != null">
+                AND status = #{status}
+            </if>
+	</select>
+
+    <!--条件更新订单，实际上条件更新不适应于:原来字段原来有值，想改为没值的情况(全更新)-->
+    <update id="updateByPrimaryKeySelective" parameterType="edu.ahpu.pojo.Order">
+        UPDATE orders
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="sellerId != null">
+                seller_id = #{sellerId,jdbcType=INTEGER},
+            </if>
+            <if test="goodsId != null">
+                goods_id = #{goodsId,jdbcType=INTEGER},
+            </if>
+            <if test="addressId != null">
+                address_id = #{addressId,jdbcType=INTEGER},
+            </if>
+            <if test="orderPrice != null">
+                order_price = #{orderPrice,jdbcType=REAL},
+            </if>
+            <if test="orderType != null">
+                order_type = #{orderType,jdbcType=TINYINT},
+            </if>
+            <if test="orderNote != null">
+                order_note = #{orderNote,jdbcType=LONGVARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where order_id = #{orderId}
+    </update>
+
+    <!--根据orderId查询订单信息-->
+    <select id="getOrderByOrderId" resultMap="BaseResultMap">
+		select * from orders
+		where
+		    order_id = #{orderId,jdbcType=BIGINT}
+	</select>
+
+    <!--根据orderId查询订单状态信息-->
+    <select id="getOrderStatusByOrderId" resultMap="orderStatusMap">
+        select * from order_status
+        where
+            order_id = #{orderId,jdbcType=BIGINT}
+    </select>
+
+    <!-- 全字段更新订单信息 当传入的字段不对应时，很容易给数据库注入空值 -->
+    <update id="updateByPrimaryKey" parameterType="edu.ahpu.pojo.Order">
+        UPDATE orders
+        set
+            user_id = #{userId,jdbcType=INTEGER},
+            seller_id = #{sellerId,jdbcType=INTEGER},
+            goods_id = #{goodsId,jdbcType=INTEGER},
+            address_id = #{addressId,jdbcType=INTEGER},
+            order_price = #{orderPrice,jdbcType=REAL},
+            order_type = #{orderType,jdbcType=TINYINT},
+            order_note = #{orderNote,jdbcType=LONGVARCHAR},
+            create_time = #{createTime,jdbcType=VARCHAR}
+        where
+            order_id = #{orderId,jdbcType=INTEGER}
+    </update>
+
+    <!--全字段更新order_status-->
+    <update id="updateOrderStatus" parameterType="edu.ahpu.pojo.OrderStatus">
+        update order_status
+        set
+            status = #{status,jdbcType=TINYINT},
+            create_time = #{createTime,jdbcType=VARCHAR},
+            payment_time = #{paymentTime,jdbcType=VARCHAR},
+            consign_time = #{consignTime,jdbcType=VARCHAR},
+            end_time = #{endTime,jdbcType=VARCHAR},
+            close_time = #{closeTime,jdbcType=VARCHAR},
+            apply_refund_time = #{applyRefundTime,jdbcType=VARCHAR},
+            refund_time = #{refundTime,jdbcType=VARCHAR},
+            comment_time = #{commentTime,jdbcType=VARCHAR}
+        where
+            order_id = #{orderId}
+    </update>
+
+
+
+    <!--admin功能 **************************************************-->
+
+
+
+
+
+
+
+    <!--向订单状态表中添加订单状态信息-->
+    <insert id="addOrderStatus" parameterType="edu.ahpu.pojo.OrderStatus">
+        insert into order_status
+            (order_id,status,create_time)
+        values
+            (#{orderId,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, #{createTime,jdbcType=VARCHAR})
+    </insert>
+
+    <!-- 生成订单 -->
+    <!-- 为什么#{}要指定javaType? https://www.cnblogs.com/guanghe/p/9317476.html -->
+    <insert id="addOrder" parameterType="edu.ahpu.pojo.Order">
+		insert into orders
+		    (order_id,user_id,seller_id,goods_id,address_id,
+		    order_type,order_price,order_note,create_time)
+		values
+		    (#{orderId,jdbcType=BIGINT},#{userId,jdbcType=INTEGER},#{sellerId,jdbcType=INTEGER},
+		    #{goodsId,jdbcType=INTEGER},#{addressId,jdbcType=INTEGER},
+		    #{orderType,jdbcType=INTEGER},#{orderPrice,jdbcType=REAL},
+		    #{orderNote,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR})
+	</insert>
+
+
+
+
+
+    <!--更新订单状态及状态对应的时间-->
+    <update id="updateOrderStatusSelective" parameterType="edu.ahpu.pojo.OrderStatus">
+        update order_status
+        <set>
+            <if test="status != null">
+                status = #{status,jdbcType=TINYINT},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=VARCHAR},
+            </if>
+            <if test="paymentTime != null">
+                payment_time = #{paymentTime,jdbcType=VARCHAR},
+            </if>
+            <if test="consignTime != null">
+                consign_time = #{consignTime,jdbcType=VARCHAR},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=VARCHAR},
+            </if>
+            <if test="closeTime != null">
+                close_time = #{closeTime,jdbcType=VARCHAR},
+            </if>
+            <if test="applyRefundTime != null">
+                apply_refund_time = #{applyRefundTime,jdbcType=VARCHAR},
+            </if>
+            <if test="refundTime != null">
+                refund_time = #{refundTime,jdbcType=VARCHAR},
+            </if>
+            <if test="commentTime != null">
+                comment_time = #{commentTime,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where
+            order_id = #{orderId}
+    </update>
+
+    <!--根据userId查询当前用户所有的购买物品的订单 -->
+    <select id="getOrdersByUserId" resultMap="BaseResultMap">
+		select * from orders
+		where
+		    user_id = #{userId,jdbcType=INTEGER}
+		order by
+		    create_time desc
+	</select>
+
+    <!--根据sellerId查询当前用户所有的卖出物品的订单-->
+    <select id="getOrdersOfSellBySellerId" resultMap="BaseResultMap">
+		select * from orders
+		where
+		    seller_id = #{sellerId,jdbcType=INTEGER}
+		order by
+		    create_time desc
+	</select>
+
+    <!--取消退款申请，将退款申请时间设置为null-->
+    <update id="cancelRefund" parameterType="edu.ahpu.pojo.OrderStatus">
+        update order_status
+        set
+            status = #{status},apply_refund_time = null
+        where order_id = #{orderId}
+    </update>
+
+
+    <!--*******************************暂时没用到分界线**************************************-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <select id="selectById" resultMap="BaseResultMap">
+		select * from orders where id=#{id,jdbcType=INTEGER}
+	</select>
+
+    <select id="getPageOrdersByOrders" resultMap="BaseResultMap">
+        select * from orders where 1=1
+        <if test="orderNum != '' and orderNum != null">
+            AND order_num like concat('%',#{orderNum},'%')
+        </if>
+        <if test="orderInformation != '' and orderInformation != null">
+            AND order_information like concat('%',#{orderInformation},'%')
+        </if>
+        <if test="orderState != null">
+            AND order_state like concat('%',#{orderState},'%')
+        </if>
+    </select>
+
+    <!--修改订单状态 state=2(已发货)-->
+    <update id="deliverByOrderNum">
+        UPDATE orders
+        <set>order_state=2</set>
+        WHERE orders.order_num = #{orderNum,jdbcType=INTEGER};
+    </update>
+
+    <!--修改订单状态 state=3(已收货)-->
+    <update id="receiptByOrderNum">
+        UPDATE orders
+        <set>order_state=3</set>
+        WHERE orders.order_num = #{orderNum,jdbcType=INTEGER};
+    </update>
+
+    <delete id="deleteByPrimaryKeys" parameterType="java.lang.Integer">
+		delete from orders where id = #{id,jdbcType=INTEGER}
+	</delete>
+</mapper>

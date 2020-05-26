@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahpu.dao.AddressMapper">
+
+    <resultMap id="addressMap" type="edu.ahpu.pojo.Address">
+        <id column="id" property="id" jdbcType="INTEGER"></id>
+        <result column="description" property="description" jdbcType="VARCHAR"></result>
+        <result column="username" property="username" jdbcType="VARCHAR"></result>
+        <result column="phone" property="phone" jdbcType="VARCHAR"></result>
+        <result column="user_id" property="userId" jdbcType="INTEGER"></result>
+        <result column="default_addr" property="defaultAddr" jdbcType="TINYINT"></result>
+    </resultMap>
+
+
+    <!--条件查询所有address-->
+    <select id="getAddressList" resultMap="addressMap" parameterType="edu.ahpu.pojo.Address">
+        select * from address
+        where 1 = 1
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="description != null and description != ''">
+            AND description like concat('%',#{description},'%')
+        </if>
+        <if test="username != null and username != ''">
+            AND username like concat('%',#{username},'%')
+        </if>
+        <if test="phone != null and phone != ''">
+            AND phone like concat('%',#{phone},'%')
+        </if>
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+        <if test="defaultAddr != null">
+            and default_addr = #{defaultAddr}
+        </if>
+    </select>
+
+    <!--条件更新字段-->
+    <update id="updateByPrimaryKeySelective"  parameterType="edu.ahpu.pojo.Comment">
+        update address
+        <set>
+            <if test="description != null and description != ''">
+                description = #{description},
+            </if>
+            <if test="username != null and username != ''">
+                username = #{username},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+
+
+
+
+
+
+
+
+
+    <!--根据userId查询对应的所有地址信息-->
+    <select id="getAddressesByUserId" resultMap="addressMap">
+        select * from address
+        where user_id = #{userId}
+    </select>
+
+    <!--根据userId查询地址数目-->
+    <select id="getAddressNumByUserId" resultType="int">
+        select count(*) from address
+        where user_id = #{userId}
+    </select>
+
+    <!--添加地址-->
+    <insert id="addAddress">
+        insert into
+            address (description,username,phone,user_id,default_addr)
+        values
+            (#{description,jdbcType=VARCHAR},#{username,jdbcType=VARCHAR}
+            ,#{phone,jdbcType=VARCHAR},#{userId,jdbcType=INTEGER}
+            ,#{defaultAddr,jdbcType=TINYINT})
+    </insert>
+
+    <!--将原来的默认地址更新为普通地址-->
+    <update id="updateDefaultAddrToOrdinaryById">
+        update address
+        set
+            default_addr = 1
+        where id = #{id};
+    </update>
+
+    <!--根据id设置其为默认地址-->
+    <update id="setDefaultAddressById">
+        update address
+        set
+            default_addr = 0
+        where id = #{id}
+    </update>
+
+    <!--根据id查询地址信息-->
+    <select id="getAddressById" resultMap="addressMap">
+        select * from address where id = #{id}
+    </select>
+
+    <!--根据userId查询该用户的默认地址-->
+    <select id="getDefaultAddressByUserId" resultMap="addressMap">
+        select * from address where user_id = #{userId} and default_addr = 0;
+    </select>
+
+    <!--更新地址-->
+    <update id="updateAddress">
+        update address
+        set
+            description = #{description},
+            username = #{username},
+            phone = #{phone},
+            default_addr = #{defaultAddr}
+        where
+            id = #{id}
+    </update>
+
+    <!--根据id删除地址-->
+    <delete id="deleteAddressById">
+        delete from address where id = #{id}
+    </delete>
+
+</mapper>

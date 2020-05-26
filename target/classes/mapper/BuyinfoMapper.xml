@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahpu.dao.BuyinfoMapper">
+
+    <resultMap id="BaseResultMap" type="edu.ahpu.pojo.Buyinfo">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_id" property="userId" jdbcType="INTEGER"/>
+        <result column="create_at" property="createAt" jdbcType="VARCHAR"/>
+        <result column="context" property="context" jdbcType="LONGVARCHAR"/>
+        <association property="user" column="user_id" javaType="edu.ahpu.pojo.User"
+                     select="edu.ahpu.dao.UserMapper.getUserById" fetchType="lazy"/>
+    </resultMap>
+    <!--<resultMap id="userMap" type="edu.ahpu.pojo.User">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="head_img_url" property="headImgUrl" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="CHAR"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="CHAR"/>
+        <result column="QQ" property="qq" jdbcType="VARCHAR"/>
+        <result column="ucreate_at" property="createAt" jdbcType="VARCHAR"/>
+        <result column="power" property="power" jdbcType="INTEGER"/>
+        <result column="last_login" property="lastLogin" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+    </resultMap>-->
+
+    <!--******************************** admin ********************************-->
+
+    <!--条件查询所有buyinfo-->
+    <select id="getBuyinfoList" resultMap="BaseResultMap" parameterType="edu.ahpu.pojo.Buyinfo">
+        select * from buyinfo
+        where 1 = 1
+        <if test="id != null">
+            and id = #{id}
+        </if>
+        <if test="context != null and context != ''">
+            AND context like concat('%',#{context},'%')
+        </if>
+        <if test="userId != null">
+            and user_id = #{userId}
+        </if>
+    </select>
+
+    <!--条件更新字段-->
+    <update id="updateByPrimaryKeySelective"  parameterType="edu.ahpu.pojo.Buyinfo">
+        update buyinfo
+        <set>
+            <if test="context != null and context != ''">
+                context = #{context},
+            </if>
+            <if test="userId != null">
+                user_id = #{userId},
+            </if>
+            <if test="createAt != null">
+                create_at = #{createAt},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--根据id查询buyinfo-->
+    <select id="getBuyinfoById" resultMap="BaseResultMap" parameterType="edu.ahpu.pojo.Buyinfo">
+        select * from buyinfo
+        where id = #{id}
+    </select>
+
+    <!--全字段更新buyinfo-->
+    <update id="updateByPrimaryKey" parameterType="edu.ahpu.pojo.Buyinfo">
+        update buyinfo
+        set
+            context = #{context},
+            user_id = #{userId},
+            create_at = #{createAt}
+        where id = #{id}
+    </update>
+
+    <!--根据id删除buyinfo-->
+    <delete id="deleteById" parameterType="edu.ahpu.pojo.Buyinfo">
+        delete from buyinfo where id = #{id}
+    </delete>
+
+    <!--******************************** admin ********************************-->
+
+
+    <!--查询所有的求购信息-->
+    <select id="findAllBuyinfo" resultMap="BaseResultMap">
+        select * from buyinfo n,user u where n.user_id=u.id order by n.create_at desc
+    </select>
+
+    <!--添加求购信息-->
+    <insert id="addBuyinfo">
+        insert into
+            buyinfo(user_id,create_at,context)
+        values
+            (#{userId,jdbcType=INTEGER},#{createAt,jdbcType=VARCHAR}
+            ,#{context,jdbcType=LONGVARCHAR})
+    </insert>
+
+    <!-- 从求购信息表中查询最近的limit条求购信息 -->
+    <select id="getBuyInfosLimit" resultMap="BaseResultMap">
+        select *
+        from
+            buyinfo,user u
+        where
+            buyinfo.user_id = u.id
+        order by
+            buyinfo.create_at desc limit #{limit}
+    </select>
+
+</mapper>

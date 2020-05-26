@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.ahpu.dao.ImageMapper">
+
+    <resultMap id="BaseResultMap" type="edu.ahpu.pojo.Image">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="goods_id" property="goodsId" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="ResultMapWithBLOBs" type="edu.ahpu.pojo.Image" extends="BaseResultMap">
+        <result column="img_url" property="imgUrl" jdbcType="LONGVARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, goods_id
+    </sql>
+
+    <sql id="Blob_Column_List">
+        img_url
+    </sql>
+
+    <!--根据imgUrl查询image-->
+    <select id="getImageByImgUrl" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+        select * from image where img_url = #{imgUrl}
+    </select>
+
+    <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from image
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+
+    <!--根据物品id，查询该物品对应的图片信息-->
+    <select id="selectByGoodsPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer">
+        select * from image where goods_id = #{goodsId,jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from image
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+
+    <!--根据物品id删除image表中该物品对应的图片信息-->
+    <delete id="deleteImagesByGoodsPrimaryKey" parameterType="java.lang.Integer">
+        delete from image
+        where goods_id = #{goodsId,jdbcType=INTEGER}
+    </delete>
+
+    <!--添加物品图片信息到图片信息库-->
+    <insert id="insert" parameterType="edu.ahpu.pojo.Image">
+    insert into image (id, goods_id, img_url
+      )
+    values (#{id,jdbcType=INTEGER}, #{goodsId,jdbcType=INTEGER}, #{imgUrl,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="edu.ahpu.pojo.Image">
+        insert into image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="goodsId != null">
+                goods_id,
+            </if>
+            <if test="imgUrl != null">
+                img_url,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="goodsId != null">
+                #{goodsId,jdbcType=INTEGER},
+            </if>
+            <if test="imgUrl != null">
+                #{imgUrl,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="edu.ahpu.pojo.Image">
+        update image
+        <set>
+            <if test="goodsId != null">
+                goods_id = #{goodsId,jdbcType=INTEGER},
+            </if>
+            <if test="imgUrl != null">
+                img_url = #{imgUrl,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="edu.ahpu.pojo.Image">
+        update image
+        set goods_id = #{goodsId,jdbcType=INTEGER},
+          img_url = #{imgUrl,jdbcType=LONGVARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="edu.ahpu.pojo.Image">
+        update image
+        set goods_id = #{goodsId,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+
+    <!--根据物品id更新物品对应的图片信息-->
+    <update id="updateByGoodsId">
+        update image
+        set img_url = #{imgUrl}
+        where goods_id = #{goodsId}
+    </update>
+
+</mapper>
